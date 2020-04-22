@@ -14,7 +14,7 @@ class DBQueries {
       DBManager.columnSilent : inp[3],
       DBManager.columnRepeat : inp[4],
     };
-    _insert(row);
+    await _insert(row);
   }
 
   Future<int> _insert(Map<String,dynamic> row) async {
@@ -25,20 +25,33 @@ class DBQueries {
 
   Future<int> deleteRow(String key) async {
     Database db = await DBManager().database;
-    int id = await db.delete(DBManager.table,where: '$DBManager.columnId = ?', whereArgs: [key]);
+    int id = await db.delete(DBManager.table,where: DBManager.columnKey + ' = ?', whereArgs: [key]);
     return id; 
   }
 
-  /*Future<List>*/void getEvents(String date) async {
+  Future<List> getEventsOn(String date) async {
     Database db = await DBManager().database;
-    List<Map> results = await db.query(DBManager.table, where : '$DBManager.columnDate = ?', whereArgs: [date]);
-    print(results.map((result) => [
+    List<Map> results = await db.query(DBManager.table, where : DBManager.columnDate + ' = ?', whereArgs: [date]);
+    return results.map((result) => [
       result[DBManager.columnKey], 
       result[DBManager.columnText], 
       result[DBManager.columnDate], 
       result[DBManager.columnTime],
       result[DBManager.columnSilent],
       result[DBManager.columnRepeat]
-    ]).toList());
+    ]).toList();
+  }
+
+  Future<List> getEvents() async {
+    Database db = await DBManager().database;
+    List<Map> results = await db.rawQuery("SELECT * FROM " + DBManager.table, null);
+    return results.map((result) => [
+      result[DBManager.columnKey], 
+      result[DBManager.columnText], 
+      result[DBManager.columnDate], 
+      result[DBManager.columnTime],
+      result[DBManager.columnSilent],
+      result[DBManager.columnRepeat]
+    ]).toList();
   }
 }

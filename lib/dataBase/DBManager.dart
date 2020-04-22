@@ -36,16 +36,7 @@ class DBManager{
         onCreate: _onCreate);
   }
 
-  Future _onCreate(Database db, int version) async {
-    await db.execute('''
-          CREATE TABLE $table (
-            $columnKey TEXT NOT NULL PRIMARY KEY,
-            $columnText TEXT NOT NULL,
-            $columnDate TEXT NOT NULL,
-            $columnTime TEXT NOT NULL,
-            $columnSilent TEXT NOT NULL,
-            $columnRepeat TEXT NOT NULL,
-          )
-          ''');
+  _onCreate(Database db, int version) async {
+    await db.execute("CREATE TABLE $table ( $columnKey TEXT PRIMARY KEY, $columnText TEXT NOT NULL, $columnDate TEXT NOT NULL, $columnTime TEXT NOT NULL, $columnSilent TEXT NOT NULL, $columnRepeat TEXT NOT NULL)");
   }
 }

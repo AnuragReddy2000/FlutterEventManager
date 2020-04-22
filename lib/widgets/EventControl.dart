@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:virtual_event_manager/dataBase/DBQueries.dart';
 import 'package:virtual_event_manager/widgets/ControlButton.dart';
 
 class EventControl extends StatelessWidget{

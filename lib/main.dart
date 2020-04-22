@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtual_event_manager/dataBase/DBQueries.dart';
+import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
 import 'package:virtual_event_manager/widgets/UpcomingEvents.dart';
 
 void main() {
@@ -10,7 +10,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    DBQueries().insertRow(['Meeting at 10','2020-04-18','10:30:00','false','false']);
+    //ChannelTasks.setAlarm(['12234','Meeting at 10','2020-04-20','09:30:00','false','false']);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
