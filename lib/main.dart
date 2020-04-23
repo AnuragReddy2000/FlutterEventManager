@@ -10,7 +10,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //ChannelTasks.setAlarm(['12234','Meeting at 10','2020-04-20','09:30:00','false','false']);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

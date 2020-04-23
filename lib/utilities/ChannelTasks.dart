@@ -1,10 +1,12 @@
 import 'package:flutter/services.dart';
+import 'package:virtual_event_manager/dataBase/DBQueries.dart';
 
 class ChannelTasks{
 
-  static const platform = const MethodChannel('event_manager.flutter.dev/alarm');
+  static const platform = const MethodChannel('com.flutter.event.alarm');
+
   static void setAlarm(List<String> inp) async {
-    String res = await platform.invokeMethod('setAlarm',input(inp));
+    String res = await platform.invokeMethod('setAlarm');
     print(res);
   }
 
@@ -18,4 +20,5 @@ class ChannelTasks{
     args['Repeat'] = inp[5];
     return args;
   }
+
 }

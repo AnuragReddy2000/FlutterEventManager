@@ -6,12 +6,13 @@ import 'AlertPopUp.dart';
 
 class EventsList extends StatelessWidget{
   final List<String> inp;
-  EventsList({this.inp});
+  final Function callBack;
+  EventsList({this.inp,this.callBack});
 
   @override 
   Widget build(BuildContext context){
     return InkWell(
-      onTap: (){AlertPopUp.alertBox(context,inp,'alert');},
+      onTap: (){AlertPopUp.alertBox(context,inp,'view',callBack);},
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(width: 1.0, color: Colors.white),

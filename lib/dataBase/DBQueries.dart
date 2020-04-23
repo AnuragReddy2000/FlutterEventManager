@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 
 class DBQueries {
 
-  void insertRow(List<String> inp) async {
+  static void insertRow(List<String> inp) async {
     var uuid = Uuid();
     Map<String, dynamic> row = {
       DBManager.columnKey : uuid.v4().toString(),
@@ -17,41 +17,41 @@ class DBQueries {
     await _insert(row);
   }
 
-  Future<int> _insert(Map<String,dynamic> row) async {
+  static Future<int> _insert(Map<String,dynamic> row) async {
     Database db = await DBManager().database;
     int id = await db.insert(DBManager.table, row);
     return id;
   }
 
-  Future<int> deleteRow(String key) async {
+  static Future<int> deleteRow(String key) async {
     Database db = await DBManager().database;
     int id = await db.delete(DBManager.table,where: DBManager.columnKey + ' = ?', whereArgs: [key]);
     return id; 
   }
 
-  Future<List> getEventsOn(String date) async {
+  static Future<List> getEventsOn(String date) async {
     Database db = await DBManager().database;
     List<Map> results = await db.query(DBManager.table, where : DBManager.columnDate + ' = ?', whereArgs: [date]);
     return results.map((result) => [
-      result[DBManager.columnKey], 
-      result[DBManager.columnText], 
-      result[DBManager.columnDate], 
-      result[DBManager.columnTime],
-      result[DBManager.columnSilent],
-      result[DBManager.columnRepeat]
+      result[DBManager.columnKey].toString(), 
+      result[DBManager.columnText].toString(), 
+      result[DBManager.columnDate].toString(), 
+      result[DBManager.columnTime].toString(),
+      result[DBManager.columnSilent].toString(),
+      result[DBManager.columnRepeat].toString()
     ]).toList();
   }
 
-  Future<List> getEvents() async {
+  static Future<List<List<String>>> getEvents() async {
     Database db = await DBManager().database;
     List<Map> results = await db.rawQuery("SELECT * FROM " + DBManager.table, null);
     return results.map((result) => [
-      result[DBManager.columnKey], 
-      result[DBManager.columnText], 
-      result[DBManager.columnDate], 
-      result[DBManager.columnTime],
-      result[DBManager.columnSilent],
-      result[DBManager.columnRepeat]
+      result[DBManager.columnKey].toString(), 
+      result[DBManager.columnText].toString(), 
+      result[DBManager.columnDate].toString(), 
+      result[DBManager.columnTime].toString(),
+      result[DBManager.columnSilent].toString(),
+      result[DBManager.columnRepeat].toString()
     ]).toList();
   }
 }
