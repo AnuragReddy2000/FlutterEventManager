@@ -5,12 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 class ControlButton extends StatelessWidget{
   final IconData icon;
   final String text;
-  ControlButton({this.icon,this.text,});
+  final Function ontap;
+  ControlButton({this.icon,this.text,this.ontap});
 
   @override 
   Widget build(BuildContext context){
     return InkWell(
-      onTap: null,
+      onTap: (){ontap(context);},
       child:Container(
         padding: EdgeInsets.only(bottom: 5),
         child: Column(

@@ -10,15 +10,14 @@ class DBManager{
   factory DBManager() => _instance;
 
   static final table = 'Events';
-
+  static final notestable = 'Notes';
   static final columnKey = 'Id';
   static final columnText = 'Text';
   static final columnDate = 'Date';
   static final columnTime = 'Time';
   static final columnSilent = 'Silent';
   static final columnRepeat = 'Repeat';
-
-  
+  static final columnTitle = 'Title';
 
   static Database _db;
   Future<Database> get database async {
@@ -38,5 +37,6 @@ class DBManager{
 
   _onCreate(Database db, int version) async {
     await db.execute("CREATE TABLE $table ( $columnKey TEXT PRIMARY KEY, $columnText TEXT NOT NULL, $columnDate TEXT NOT NULL, $columnTime TEXT NOT NULL, $columnSilent TEXT NOT NULL, $columnRepeat TEXT NOT NULL)");
+    await db.execute("CREATE TABLE $notestable ( $columnKey TEXT PRIMARY KEY, $columnTitle TEXT NOT NULL, $columnText TEXT NOT NULL, $columnDate TEXT NOT NULL, $columnTime TEXT NOT NULL)");
   }
 }

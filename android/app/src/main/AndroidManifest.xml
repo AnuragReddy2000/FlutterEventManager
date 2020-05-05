@@ -43,5 +43,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <receiver android:name=".MyReceiver"  android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.virtual_event_manager.RING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

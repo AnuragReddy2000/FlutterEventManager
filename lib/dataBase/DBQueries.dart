@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'DBManager.dart';
 import 'package:uuid/uuid.dart';
@@ -16,11 +17,35 @@ class DBQueries {
     };
     await _insert(row);
   }
+  static void insertNote(String title, String text) async {
+    var date = DateTime.now();
+    var uuid = Uuid();
+    Map<String, dynamic> row = {
+      DBManager.columnKey : uuid.v4().toString(),
+      DBManager.columnTitle : title,
+      DBManager.columnText : text,
+      DBManager.columnDate : DateFormat('yyyy-MM-dd').format(date),
+      DBManager.columnTime : DateFormat.jms().format(date),
+    };
+    await _insertNoteRow(row);
+  }
 
   static Future<int> _insert(Map<String,dynamic> row) async {
     Database db = await DBManager().database;
     int id = await db.insert(DBManager.table, row);
     return id;
+  }
+
+  static Future<int> _insertNoteRow(Map<String,dynamic> row) async{
+    Database db = await DBManager().database;
+    int id = await db.insert(DBManager.notestable,row);
+    return id;
+  }
+
+  static Future<int> deleteNote(String key) async {
+    Database db = await DBManager().database;
+    int id = await db.delete(DBManager.notestable,where: DBManager.columnKey + ' = ?', whereArgs: [key]);
+    return id; 
   }
 
   static Future<int> deleteRow(String key) async {
@@ -52,6 +77,18 @@ class DBQueries {
       result[DBManager.columnTime].toString(),
       result[DBManager.columnSilent].toString(),
       result[DBManager.columnRepeat].toString()
+    ]).toList();
+  }
+
+  static Future<List<List<String>>> getNotes() async {
+    Database db = await DBManager().database;
+    List<Map> results = await db.rawQuery("SELECT * FROM " + DBManager.notestable, null);
+    return results.map((result) => [
+      result[DBManager.columnKey].toString(), 
+      result[DBManager.columnTitle].toString(), 
+      result[DBManager.columnText].toString(), 
+      result[DBManager.columnDate].toString(), 
+      result[DBManager.columnTime].toString()
     ]).toList();
   }
 }
