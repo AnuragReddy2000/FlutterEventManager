@@ -40,13 +40,17 @@ class NotesState extends State<Notes>{
       width: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text('Notes: ',style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),textAlign: TextAlign.center,),
-          isLoading ? Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: (MediaQuery.of(context).size.height)*0.09),
-            child: CircularProgressIndicator(backgroundColor: Colors.transparent,valueColor: AlwaysStoppedAnimation<Color>(Colors.white60),),
+          isLoading ? Expanded(
+            child: Container(
+              alignment: Alignment.center,
+              child: Text('Please wait...',
+                style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),
+                textAlign: TextAlign.center,
+              )
+            )
           )
           : 
           ((inp.length == 0) ? Text('You haven\'t written any!',style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),textAlign: TextAlign.center,)

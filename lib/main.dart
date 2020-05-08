@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtual_event_manager/dataBase/DBQueries.dart';
+import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
+import 'package:virtual_event_manager/widgets/AlertPage.dart';
 import 'package:virtual_event_manager/widgets/EventControl.dart';
 import 'package:virtual_event_manager/widgets/Notes.dart';
 import 'package:virtual_event_manager/widgets/UpcomingEvents.dart';
@@ -13,12 +16,18 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //ChannelTasks.setAlarm(['2020','meeting at 10','2020-05-06','19:56:00','false','false']);
+    //DBQueries.insertRow(['meeting at 10','2020-05-03','12:30:00','false','false']);
     return MaterialApp(
       title: 'Flutter Demo',
+      initialRoute: '/',
+      routes: {
+        '/': (context) => MyHomePage(title: 'Flutter Demo Home Page'),
+        '/reminder': (context) => AlertPage(),
+      },
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }

@@ -56,7 +56,10 @@ class UpcomingEventsState extends State<UpcomingEvents>{
           child:
           isLoading ? Container(
             alignment: Alignment.center,
-              child: CircularProgressIndicator(backgroundColor: Colors.transparent,valueColor: AlwaysStoppedAnimation<Color>(Colors.white60),),
+            child:  Text('Please wait...',
+              style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),
+              textAlign: TextAlign.center,
+            )
           )
           : 
           upcomingEvents

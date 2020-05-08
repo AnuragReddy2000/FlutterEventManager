@@ -9,7 +9,7 @@ class AlertPopUp {
   static void alertBox(BuildContext context, List<String> inp, String type, Function onDelete) async {
     await showDialog(context: context,
       builder: (context) {
-        String det = 'less';
+        String details = 'less';
         return StatefulBuilder(
           builder: (context,setState){
             return AlertDialog(
@@ -31,19 +31,16 @@ class AlertPopUp {
                     style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),
                   )]
                   :
-                  _getChildern(det, inp),
+                  _getChildern(details, inp),
                 ),
               ),
-              actions: (type == 'note') ? [FlatButton(onPressed: (){delete(inp,context,onDelete,type);}, child: Text('Delete',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),
-                FlatButton(onPressed: (){Navigator.pop(context,(){});}, child: Text('Back',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),] 
-              : 
-              (det == 'more') ? [FlatButton(onPressed: (){delete(inp,context,onDelete,type);}, child: Text('Delete',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),
-                FlatButton(onPressed: (){setState(() {det = "less";});}, child: Text('Less Details',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)),)),
-                FlatButton(onPressed: (){Navigator.pop(context,(){});}, child: Text('Back',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),] 
-                :
-                [ FlatButton(onPressed: (){delete(inp,context,onDelete,type);}, child: Text('Delete',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),
-                FlatButton(onPressed: (){setState(() {det = "more";});}, child: Text('More Details',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)),)),
-                FlatButton(onPressed: (){Navigator.pop(context,(){});}, child: Text('Back',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),]
+              actions: <Widget>[
+                FlatButton(onPressed: (){delete(inp,context,onDelete,type);}, child: Text('Delete',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),
+                ((type == 'note') ? Container() : (details == 'more') ? FlatButton(onPressed: (){setState(() {details = "less";});}, child: Text('Less Details',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)),))
+                  : FlatButton(onPressed: (){setState(() {details = "more";});}, child: Text('More Details',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)),))
+                ),
+                FlatButton(onPressed: (){Navigator.pop(context,(){});}, child: Text('Back',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),
+              ]
             );
           }
         );
@@ -52,13 +49,13 @@ class AlertPopUp {
     );
   }
 
-  static List<Widget> _getChildern(String def,List<String> inp){
-    if(def == 'less'){
+  static List<Widget> _getChildern(String details,List<String> inp){
+    if(details == 'less'){
       return [Text(inp[1],
         style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),
       )];
     }
-    else if(def == 'more'){
+    else if(details == 'more'){
       return [
         Container(
           margin: EdgeInsets.only(bottom : 15),

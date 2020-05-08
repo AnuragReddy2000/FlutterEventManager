@@ -8,16 +8,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.widget.Toast
+import androidx.core.app.ShareCompat.IntentBuilder
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
-import io.flutter.view.FlutterCallbackInformation
-import io.flutter.view.FlutterMain
 import java.text.SimpleDateFormat
 
 
@@ -48,7 +45,7 @@ class MainActivity: FlutterActivity() {
         val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,0)
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = getTime(call.argument<String>("Date")!!,call.argument<String>("Time")!!)
-        manager.setExact(RTC_WAKEUP,time.toLong(),pendingintent)
+        manager.setExactAndAllowWhileIdle(RTC_WAKEUP,time.toLong(),pendingintent)
         return time
     }
 
@@ -68,6 +65,9 @@ class MyReceiver: BroadcastReceiver() {
         val pm = context!!.packageManager
         val launchIntent = pm.getLaunchIntentForPackage("com.example.virtual_event_manager")
         launchIntent!!.putExtra("some_data", "value")
+        launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+        launchIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+        launchIntent.putExtra("initial_route","/reminder")
         context.startActivity(launchIntent)
         /*val handler = Handler(context!!.mainLooper)
         val runner = Runnable {
