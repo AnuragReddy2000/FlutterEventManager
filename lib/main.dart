@@ -2,12 +2,16 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:virtual_event_manager/dataBase/DBQueries.dart';
+import 'package:virtual_event_manager/models/EventsModel.dart';
 import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
 import 'package:virtual_event_manager/widgets/AlertPage.dart';
 import 'package:virtual_event_manager/widgets/EventControl.dart';
 import 'package:virtual_event_manager/widgets/Notes.dart';
 import 'package:virtual_event_manager/widgets/UpcomingEvents.dart';
+
+import 'models/NotesModel.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,8 +20,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //ChannelTasks.setAlarm(['2020','meeting at 10','2020-05-06','19:56:00','false','false']);
-    //DBQueries.insertRow(['meeting at 10','2020-05-03','12:30:00','false','false']);
     return MaterialApp(
       title: 'Flutter Demo',
       initialRoute: '/',
@@ -39,36 +41,46 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Color.fromARGB(255, 23, 30, 39),
-      appBar: AppBar(
-        title: Text('Event Manager',
-          style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 25, color: Colors.white)),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => EventsModel()
         ),
-        backgroundColor: Color.fromARGB(150, 41, 43, 50),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-            child: Text('Upcoming Events: ',
-              style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),
-              textAlign: TextAlign.left,
+        ChangeNotifierProvider(
+          create: (context) => NotesModel()
+        )
+      ],
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Color.fromARGB(255, 23, 30, 39),
+        appBar: AppBar(
+          title: Text('Event Manager',
+            style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 25, color: Colors.white)),
+          ),
+          backgroundColor: Color.fromARGB(150, 41, 43, 50),
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(top: 10, left: 10, bottom: 10),
+              child: Text('Upcoming Events: ',
+                style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),
+                textAlign: TextAlign.left,
+              ),
             ),
-          ),
-          Row(
-            children: <Widget>[
-              UpcomingEvents(),
-              Expanded(child: EventControl()),
-            ],
-          ),
-          Expanded(
-            child: Notes(),
-          )
-        ],
+            Row(
+              children: <Widget>[
+                UpcomingEvents(),
+                Expanded(child: EventControl()),
+              ],
+            ),
+            Expanded(
+              child: Notes(),
+            )
+          ],
+        ),
       ),
     );
   }

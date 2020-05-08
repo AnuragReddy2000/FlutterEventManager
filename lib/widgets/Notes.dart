@@ -1,32 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtual_event_manager/dataBase/DBQueries.dart';
-import 'package:virtual_event_manager/widgets/NotesCarousel.dart';
+import 'package:provider/provider.dart';
+import 'package:virtual_event_manager/models/NotesModel.dart';
 
-class Notes extends StatefulWidget{
-
-  @override 
-  NotesState createState() => NotesState();
-}
-
-class NotesState extends State<Notes>{
-  bool isLoading = true;
-  List<List<String>> inp;
-
-  void getData() async {
-    isLoading = true;
-    inp= await DBQueries.getNotes();
-    setState(() => {
-      isLoading = false,
-    });
-  } 
-
-  @override 
-  void initState() {
-    super.initState();
-    getData();
-  }
+class Notes extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
@@ -43,19 +21,20 @@ class NotesState extends State<Notes>{
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text('Notes: ',style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),textAlign: TextAlign.center,),
-          isLoading ? Expanded(
-            child: Container(
-              alignment: Alignment.center,
-              child: Text('Please wait...',
-                style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),
-                textAlign: TextAlign.center,
+          Consumer<NotesModel>(
+            builder: (context,myNotesModel,child){
+              return myNotesModel.isLoading ? Expanded(
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text('Please wait...',
+                    style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),
+                    textAlign: TextAlign.center,
+                  )
+                )
               )
-            )
-          )
-          : 
-          ((inp.length == 0) ? Text('You haven\'t written any!',style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),textAlign: TextAlign.center,)
-            :
-            Expanded(child: NotesCarousel(input: inp,onDelete: getData,))
+              : 
+              myNotesModel.notes;
+            }
           )
         ],
       ),

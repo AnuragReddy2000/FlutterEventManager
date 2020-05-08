@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtual_event_manager/dataBase/DBQueries.dart';
-import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
 import 'package:virtual_event_manager/utilities/DateSupport.dart';
 
 class AlertPopUp {
@@ -87,11 +86,7 @@ class AlertPopUp {
       barrierDismissible: false,
     );
     if(result == "yes"){
-      if(type == 'note'){
-        DBQueries.deleteNote(inp[0]);
-      }
-      //ChannelTasks.deleteAlarm(inp[0]);
-      onDelete();
+      onDelete(inp[0]);
       Navigator.pop(context);
     }
   }

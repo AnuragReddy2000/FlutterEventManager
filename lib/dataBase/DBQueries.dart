@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 
 class DBQueries {
 
-  static void insertRow(List<String> inp) async {
+  static Future<int> insertRow(List<String> inp) async {
     var uuid = Uuid();
     Map<String, dynamic> row = {
       DBManager.columnKey : uuid.v4().toString(),
@@ -15,9 +15,9 @@ class DBQueries {
       DBManager.columnSilent : inp[3],
       DBManager.columnRepeat : inp[4],
     };
-    await _insert(row);
+    return await _insert(row);
   }
-  static void insertNote(String title, String text) async {
+  static Future<int> insertNote(String title, String text) async {
     var date = DateTime.now();
     var uuid = Uuid();
     Map<String, dynamic> row = {
@@ -27,7 +27,7 @@ class DBQueries {
       DBManager.columnDate : DateFormat('yyyy-MM-dd').format(date),
       DBManager.columnTime : DateFormat.jms().format(date),
     };
-    await _insertNoteRow(row);
+    return await _insertNoteRow(row);
   }
 
   static Future<int> _insert(Map<String,dynamic> row) async {

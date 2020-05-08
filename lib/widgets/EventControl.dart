@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:virtual_event_manager/models/EventsModel.dart';
+import 'package:virtual_event_manager/models/NotesModel.dart';
 import 'package:virtual_event_manager/widgets/ControlButton.dart';
 import 'package:virtual_event_manager/widgets/NotesInput.dart';
 import 'package:virtual_event_manager/widgets/ReminderInput.dart';
@@ -18,23 +21,27 @@ class EventControl extends StatelessWidget{
             left: BorderSide(color: Colors.blue[200], width: 1.0, ),
           )
         ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-        Expanded(
-          child:ControlButton(icon: Icons.add_alarm,text: 'Add Reminder',ontap: (BuildContext context){ReminderInput.reminderInput(context, 'ring');},)
-        ),
-        Expanded(
-          child:ControlButton(icon: Icons.announcement,text: 'Silent Reminder',ontap: (BuildContext context){ReminderInput.reminderInput(context, 'Silent');},)
-        ),
-        Expanded(
-          child: ControlButton(icon: Icons.history,text: 'Repeating Reminder',ontap: (BuildContext context){ReminderInput.reminderInput(context, 'Repeating');},) 
-        ),
-        Expanded(
-          child: ControlButton(icon: Icons.create,text: 'Add New Note',ontap: (BuildContext context){NotesInput.notesInput(context);},)
-        ),
-      ],
-    ),
+      child: Consumer2<EventsModel,NotesModel>(
+        builder: (context,myEventsModel,myNotesModel,child){
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Expanded(
+                child:ControlButton(icon: Icons.add_alarm,text: 'Add Reminder',ontap: (BuildContext context){ReminderInput.reminderInput(context, 'ring',myEventsModel.saveEvent);},)
+              ),
+              Expanded(
+                child:ControlButton(icon: Icons.announcement,text: 'Silent Reminder',ontap: (BuildContext context){ReminderInput.reminderInput(context, 'Silent',myEventsModel.saveEvent);},)
+              ),
+              Expanded(
+                child: ControlButton(icon: Icons.history,text: 'Repeating Reminder',ontap: (BuildContext context){ReminderInput.reminderInput(context, 'Repeating',myEventsModel.saveEvent);},) 
+              ),
+              Expanded(
+                child: ControlButton(icon: Icons.create,text: 'Add New Note',ontap: (BuildContext context){NotesInput.notesInput(context,myNotesModel.saveNote);},)
+              ),
+            ],
+          );
+        },
+      )
     );
   }
 } 
