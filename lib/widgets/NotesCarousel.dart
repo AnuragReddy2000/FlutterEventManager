@@ -17,7 +17,7 @@ class NotesCarousel extends StatelessWidget{
         Consumer<NotesModel>(
           builder: (context,myNotesModel,child){
             return InkWell(
-              onTap:(){ AlertPopUp.alertBox(context, input[i], 'note', myNotesModel.deleteNote);},
+              onTap:(){ AlertPopUp.alertBox(context, input[i], 'note', myNotesModel.deleteNote,editNote: myNotesModel.editNote);},
               child: Container(
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 23, 30, 39),

@@ -22,7 +22,7 @@ class EventsList extends StatelessWidget{
               borderRadius: BorderRadius.all(Radius.circular(3)),
               color: Color.fromARGB(255, 23, 30, 39),
             ),
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.only(top: 10,left: 10,right: 10),
             child: IntrinsicHeight(
               child: Row(
                 children: <Widget>[
@@ -36,14 +36,14 @@ class EventsList extends StatelessWidget{
                             borderRadius: BorderRadius.all(Radius.circular(3))
                           ),
                           padding: EdgeInsets.only(left: 5,right: 3,top: 3,bottom: 3),
-                          child: Text( DateSupport.getTime(inp),
+                          child: Text( DateSupport.getTime(inp[2],inp[3]),
                             style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 12, color: Colors.white,fontWeight: FontWeight.bold)),
                           ),
                         ),
-                        Text( DateSupport.getDay(inp),
+                        Text( DateSupport.getDay(inp[2]),
                           style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 12, color: Colors.blue[200],)),
                         ),
-                        Text(DateSupport.getdate(inp),
+                        Text(DateSupport.getDate(inp[2]),
                           style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 12, color: Colors.blue[200],)),
                         ),
                       ],

@@ -6,14 +6,13 @@ import 'package:uuid/uuid.dart';
 class DBQueries {
 
   static Future<int> insertRow(List<String> inp) async {
-    var uuid = Uuid();
     Map<String, dynamic> row = {
-      DBManager.columnKey : uuid.v4().toString(),
-      DBManager.columnText : inp[0],
-      DBManager.columnDate : inp[1],
-      DBManager.columnTime : inp[2],
-      DBManager.columnSilent : inp[3],
-      DBManager.columnRepeat : inp[4],
+      DBManager.columnKey : inp[0],
+      DBManager.columnText : inp[1],
+      DBManager.columnDate : inp[2],
+      DBManager.columnTime : inp[3],
+      DBManager.columnSilent : inp[4],
+      DBManager.columnRepeat : inp[5],
     };
     return await _insert(row);
   }
@@ -54,19 +53,6 @@ class DBQueries {
     return id; 
   }
 
-  static Future<List> getEventsOn(String date) async {
-    Database db = await DBManager().database;
-    List<Map> results = await db.query(DBManager.table, where : DBManager.columnDate + ' = ?', whereArgs: [date]);
-    return results.map((result) => [
-      result[DBManager.columnKey].toString(), 
-      result[DBManager.columnText].toString(), 
-      result[DBManager.columnDate].toString(), 
-      result[DBManager.columnTime].toString(),
-      result[DBManager.columnSilent].toString(),
-      result[DBManager.columnRepeat].toString()
-    ]).toList();
-  }
-
   static Future<List<List<String>>> getEvents() async {
     Database db = await DBManager().database;
     List<Map> results = await db.rawQuery("SELECT * FROM " + DBManager.table, null);
@@ -90,5 +76,18 @@ class DBQueries {
       result[DBManager.columnDate].toString(), 
       result[DBManager.columnTime].toString()
     ]).toList();
+  }
+
+  static Future<int> editNotes(String id, String title, String text) async {
+    var date = DateTime.now();
+    Map<String, dynamic> row = {
+      DBManager.columnKey : id,
+      DBManager.columnTitle : title,
+      DBManager.columnText : text,
+      DBManager.columnDate : DateFormat('yyyy-MM-dd').format(date),
+      DBManager.columnTime : DateFormat.jms().format(date),
+    };
+    Database db = await DBManager().database;
+    return await db.update(DBManager.notestable, row, where: DBManager.columnKey + '= ?', whereArgs: [id]); 
   }
 }

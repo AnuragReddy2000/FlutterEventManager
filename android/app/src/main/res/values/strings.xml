@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="CHANNEL_ID">com.example.virtual_event_manager.notification.channel</string>
+    <string name="channel_name">AndoridChannel</string>
+    <string name="channel_description">Channel to send notifications</string>
+</resources>

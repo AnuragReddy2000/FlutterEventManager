@@ -3,17 +3,17 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:virtual_event_manager/dataBase/DBQueries.dart';
 import 'package:virtual_event_manager/models/EventsModel.dart';
 import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
-import 'package:virtual_event_manager/widgets/AlertPage.dart';
 import 'package:virtual_event_manager/widgets/EventControl.dart';
 import 'package:virtual_event_manager/widgets/Notes.dart';
+import 'package:virtual_event_manager/widgets/Reminder.dart';
 import 'package:virtual_event_manager/widgets/UpcomingEvents.dart';
 
 import 'models/NotesModel.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       initialRoute: '/',
       routes: {
-        '/': (context) => MyHomePage(title: 'Flutter Demo Home Page'),
-        '/reminder': (context) => AlertPage(),
+        '/': (context) => MyHomePage(),
+        'reminder': (context) => MyHomePage(mode: 'Reminder')
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -34,10 +34,26 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  final String mode;
+  MyHomePage({Key key,this.mode = 'Normal'}) : super(key: key);
 
-  final String title;
+  @override 
+  MyHomePageState createState() => MyHomePageState();
+}
+
+class MyHomePageState extends State<MyHomePage>{
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(widget.mode == 'Reminder'){
+        List<String> details = await ChannelTasks.getReminderData();
+        Reminder.showReminder(context, details);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context){

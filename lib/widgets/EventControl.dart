@@ -36,7 +36,7 @@ class EventControl extends StatelessWidget{
                 child: ControlButton(icon: Icons.history,text: 'Repeating Reminder',ontap: (BuildContext context){ReminderInput.reminderInput(context, 'Repeating',myEventsModel.saveEvent);},) 
               ),
               Expanded(
-                child: ControlButton(icon: Icons.create,text: 'Add New Note',ontap: (BuildContext context){NotesInput.notesInput(context,myNotesModel.saveNote);},)
+                child: ControlButton(icon: Icons.create,text: 'Add New Note',ontap: (BuildContext context){NotesInput.notesInput(context,saveNote: myNotesModel.saveNote);},)
               ),
             ],
           );
