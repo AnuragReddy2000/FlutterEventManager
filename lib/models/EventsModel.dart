@@ -42,8 +42,9 @@ class EventsModel with ChangeNotifier{
     getData();
   }  
 
-  void deleteEvent(String id) async {
-    await DBQueries.deleteRow(id);
+  void deleteEvent(List<String> inp) async {
+    await DBQueries.deleteRow(inp[0]);
+    ChannelTasks.cancelAlarm(inp);
     getData();
   }
 }

@@ -32,8 +32,8 @@ class NotesModel with ChangeNotifier{
     getData();
   }
 
-  void deleteNote(String id) async {
-    await DBQueries.deleteNote(id);
+  void deleteNote(List<String> inp) async {
+    await DBQueries.deleteNote(inp[0]);
     getData();
   }
 

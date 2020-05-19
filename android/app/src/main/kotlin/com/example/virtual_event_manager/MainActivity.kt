@@ -12,6 +12,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.flutter.embedding.android.FlutterActivity
@@ -59,22 +60,39 @@ class MainActivity: FlutterActivity() {
                         result.success("Unable to find reminder data")
                     }
                 }
-            }else if(call.method == "sendNotification(intentdata)"){
-                if(intentdata != null){
-                    if(intentdata.containsKey("route")){
-                        if(intentdata["route"] == "reminder"){
+            }else if(call.method == "sendNotification(intentdata)") {
+                if (intentdata != null) {
+                    if (intentdata.containsKey("route")) {
+                        if (intentdata["route"] == "reminder") {
                             sendNotification(intentdata)
                             result.success("Success")
                         }
-                    }
-                    else{
+                    } else {
                         result.success("Unable to send notification")
                     }
                 }
-            }else{
+            }else if(call.method == "cancelAlarm(call)"){
+                cancelAlarm(call)
+            }
+            else{
                 result.notImplemented()
             }
         }
+    }
+
+    private fun cancelAlarm(call: MethodCall) {
+        val intent = Intent("com.example.virtual_event_manager.RING")
+        /*intent.putExtra("Id",call.argument<String>("Id"))
+        intent.putExtra("Text",call.argument<String>("Text"))
+        intent.putExtra("Date",call.argument<String>("Date"))
+        intent.putExtra("Time",call.argument<String>("Time"))
+        intent.putExtra("Silent",call.argument<String>("Silent"))
+        intent.putExtra("Repeat",call.argument<String>("Repeat"))*/
+        val id = call.argument<String>("Id")
+        val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,0)
+        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        manager.cancel(pendingintent)
+        Toast.makeText(getApplicationContext(),"Reminder Cancelled", Toast.LENGTH_SHORT).show();
     }
 
     private fun setAlarm(call: MethodCall): String {
@@ -90,6 +108,7 @@ class MainActivity: FlutterActivity() {
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = getTime(call.argument<String>("Date")!!,call.argument<String>("Time")!!)
         manager.setExactAndAllowWhileIdle(RTC_WAKEUP,time.toLong(),pendingintent)
+        Toast.makeText(getApplicationContext(),"Reminder Set", Toast.LENGTH_SHORT).show();
         return time
     }
 

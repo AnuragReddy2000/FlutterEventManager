@@ -101,7 +101,7 @@ class ReminderInput{
                                   cancelStyle: TextStyle(color: Colors.blue[200]),
                                 ),
                                 showTitleActions: true,
-                                minTime: DateTime.now(),
+                                minTime: DateTime.now().add(Duration(minutes: 2)),
                                 maxTime: DateTime.now().add(Duration(days: 90)),
                                 onConfirm: (datetime) => {remindertime = datetime, setState((){isTimeset = true;})},
                               );

@@ -11,6 +11,10 @@ class ChannelTasks {
     print(res);
   }
 
+  static void cancelAlarm(List<String> inp) async {
+    await channel.invokeMethod('cancelAlarm(call)',input(inp));
+  }
+
   static Map<String,dynamic> input(List<String> inp){
     Map<String, dynamic> args = <String, dynamic>{};
     args['Id'] = inp[0];

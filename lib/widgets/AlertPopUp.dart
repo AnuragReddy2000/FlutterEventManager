@@ -89,7 +89,7 @@ class AlertPopUp {
       barrierDismissible: false,
     );
     if(result == "yes"){
-      onDelete(inp[0]);
+      onDelete(inp);
       Navigator.pop(context);
     }
   }
