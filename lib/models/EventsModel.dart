@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:virtual_event_manager/dataBase/DBQueries.dart';
 import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
 import 'package:virtual_event_manager/utilities/DateSupport.dart';
@@ -23,7 +22,7 @@ class EventsModel with ChangeNotifier{
     }
     if(data.length == 0){
       upcomingevents = Text('No Upcoming Events!',
-        style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),
+        style: TextStyle(fontSize: 18, color: Colors.white54),
         textAlign: TextAlign.center,
       );
     }
@@ -45,6 +44,11 @@ class EventsModel with ChangeNotifier{
   void deleteEvent(List<String> inp) async {
     await DBQueries.deleteRow(inp[0]);
     ChannelTasks.cancelAlarm(inp);
+    getData();
+  }
+
+  void recievedReminder(String id) async {
+    await DBQueries.deleteRow(id);
     getData();
   }
 }

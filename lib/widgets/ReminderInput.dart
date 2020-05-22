@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
@@ -19,7 +18,7 @@ class ReminderInput{
             return AlertDialog(
               backgroundColor: Color.fromARGB(255, 23, 30, 39),
               title: Text('Add '+ ((type == 'ring') ? 'New': type) + ' Reminder',
-                style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 22, color: Colors.blue[200],)),
+                style: TextStyle(fontSize: 22, color: Colors.blue[200],),
               ),
               content: SingleChildScrollView(
                 child:Form(
@@ -30,7 +29,7 @@ class ReminderInput{
                       Container(
                         margin: EdgeInsets.only(top:5),
                         alignment: Alignment.centerLeft,
-                        child: Text('Reminder Text: ',style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),),
+                        child: Text('Reminder Text: ',style: TextStyle(fontSize: 20, color: Colors.white,),),
                       ),
                       Container(
                         margin: EdgeInsets.only(top:5,bottom:5),
@@ -57,14 +56,14 @@ class ReminderInput{
                       (type == 'Repeating') ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Expanded(child: Text('Set Repeat Interval:   ',style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 14, color: Colors.white,)),textAlign: TextAlign.left,),),
+                          Expanded(child: Text('Set Repeat Interval:   ',style: TextStyle(fontSize: 14, color: Colors.white,),textAlign: TextAlign.left,),),
                           Theme(
                             data: Theme.of(context).copyWith(canvasColor: Color.fromARGB(255, 23, 30, 39)),
                             child:  DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 iconSize: 30,
                                 iconEnabledColor: Colors.white,
-                                style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)),
+                                style: TextStyle(color: Colors.blue[200],),
                                 items:['Daily','Weekly','Monthly'].map((String value) {
                                   return new DropdownMenuItem<String>(value: value,child: new  Text(value, textAlign: TextAlign.end,));}).toList(), 
                                 value: repeatinterval,
@@ -80,17 +79,26 @@ class ReminderInput{
                       )
                       : 
                       Container(),
-                      isTimeset ? Text('Remind on:  ' + DateFormat.E().format(remindertime) +' '+ DateFormat('dd-MM-yyyy').format(remindertime) +' at '+ DateFormat.jm().format(remindertime),
-                        style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 14, color: Colors.white,)),
-                        textAlign: TextAlign.left,
+                      isTimeset ? Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Remind on:  ',
+                            style: TextStyle(fontSize: 14, color: Colors.white,),
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(DateFormat.E().format(remindertime) +' '+ DateFormat('dd-MM-yyyy').format(remindertime) +' at '+ DateFormat.jm().format(remindertime),
+                            style: TextStyle(fontSize: 14, color: Colors.blue[200],),
+                            textAlign: TextAlign.left,
+                          )
+                        ],
                       )
                       : 
                       Container(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(isTimeset ? ' ' : 'Select Reminder time: ',style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 14, color: Colors.white,)),),
-                          FlatButton(child: Text(isTimeset ? 'Change time' : 'Set time',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],))),
+                          Text(isTimeset ? ' ' : 'Select Reminder time: ',style: TextStyle(fontSize: 14, color: Colors.white,),),
+                          FlatButton(child: Text(isTimeset ? 'Change time' : 'Set time',style: TextStyle(color: Colors.blue[200],)),
                             onPressed: (){
                               DatePicker.showDateTimePicker(context,
                                 theme: DatePickerTheme(
@@ -114,7 +122,7 @@ class ReminderInput{
                 ),
               ),
               actions: <Widget>[
-                FlatButton(child: Text('Add Reminder',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],))),
+                FlatButton(child: Text('Add Reminder',style: TextStyle(color: Colors.blue[200],)),
                   onPressed: (){
                     if (_formKey.currentState.validate()){
                       if(remindertime != null){
@@ -137,7 +145,7 @@ class ReminderInput{
                     }
                   },
                 ),
-                FlatButton(onPressed: (){Navigator.pop(context);}, child: Text('Back',style: GoogleFonts.quicksand(textStyle: TextStyle(color: Colors.blue[200],)))),
+                FlatButton(onPressed: (){Navigator.pop(context);}, child: Text('Back',style: TextStyle(color: Colors.blue[200],))),
               ],
             );
           }

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_event_manager/models/EventsModel.dart';
 import 'package:virtual_event_manager/utilities/DateSupport.dart';
@@ -37,14 +36,14 @@ class EventsList extends StatelessWidget{
                           ),
                           padding: EdgeInsets.only(left: 5,right: 3,top: 3,bottom: 3),
                           child: Text( DateSupport.getTime(inp[2],inp[3]),
-                            style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 12, color: Colors.white,fontWeight: FontWeight.bold)),
+                            style: TextStyle(fontSize: 12, color: Colors.white,fontWeight: FontWeight.bold),
                           ),
                         ),
                         Text( DateSupport.getDay(inp[2]),
-                          style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 12, color: Colors.blue[200],)),
+                          style: TextStyle(fontSize: 12, color: Colors.blue[200],),
                         ),
                         Text(DateSupport.getDate(inp[2]),
-                          style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 12, color: Colors.blue[200],)),
+                          style: TextStyle(fontSize: 12, color: Colors.blue[200],),
                         ),
                       ],
                     ),
@@ -58,7 +57,7 @@ class EventsList extends StatelessWidget{
                         border: Border(left: BorderSide(color: Colors.white, width: 1.0, ),),
                       ),
                       child: Text(inp[1],
-                        style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 16, color: Colors.white,)),
+                        style: TextStyle(fontSize: 16, color: Colors.white,),
                         textAlign: TextAlign.center,
                         maxLines: 1, 
                         overflow: TextOverflow.ellipsis

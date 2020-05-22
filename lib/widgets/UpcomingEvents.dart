@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_event_manager/models/EventsModel.dart';
 
@@ -26,7 +25,7 @@ class UpcomingEvents extends StatelessWidget{
               return myEventsModel.isLoading ? Container(
                 alignment: Alignment.center,
                 child:  Text('Please wait...',
-                  style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 18, color: Colors.white54)),
+                  style: TextStyle(fontSize: 18, color: Colors.white54),
                   textAlign: TextAlign.center,
                 )
               )

@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_event_manager/models/NotesModel.dart';
 import 'package:virtual_event_manager/widgets/AlertPopUp.dart';
@@ -34,7 +33,7 @@ class NotesCarousel extends StatelessWidget{
                       alignment: Alignment.center,
                       child: Text(input[i][1],
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 22, color: Colors.blue[200],)),
+                        style: TextStyle(fontSize: 22, color: Colors.blue[200],),
                       ),
                     ),
                     Container(
@@ -44,7 +43,7 @@ class NotesCarousel extends StatelessWidget{
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
-                        style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),
+                        style: TextStyle(fontSize: 20, color: Colors.white,),
                       ),
                     ),
                     Row(
@@ -56,7 +55,7 @@ class NotesCarousel extends StatelessWidget{
                             alignment: Alignment.centerLeft,
                             child: Text(input[i][3],
                               textAlign: TextAlign.left,
-                              style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 16, color: Colors.white54,)),
+                              style: TextStyle(fontSize: 16, color: Colors.white54,),
                             ),
                           ),
                         ),
@@ -67,7 +66,7 @@ class NotesCarousel extends StatelessWidget{
                             alignment: Alignment.centerRight,
                             child: Text(input[i][4],
                               textAlign: TextAlign.right,
-                              style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 16, color: Colors.white54,)),
+                              style: TextStyle(fontSize: 16, color: Colors.white54,),
                             ),
                           ),
                         ),

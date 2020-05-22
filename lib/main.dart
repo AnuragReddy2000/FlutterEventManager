@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_event_manager/models/EventsModel.dart';
 import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
@@ -20,16 +20,27 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => MyHomePage(),
-        'reminder': (context) => MyHomePage(mode: 'Reminder')
-      },
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => EventsModel()
+        ),
+        ChangeNotifierProvider(
+          create: (context) => NotesModel()
+        )
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        initialRoute: '/',
+        routes: {
+          '/': (context) => MyHomePage(),
+          'reminder': (context) => MyHomePage(mode: 'Reminder')
+        },
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: 'QuickSand',
+        ),
+      )
     );
   }
 }
@@ -50,28 +61,30 @@ class MyHomePageState extends State<MyHomePage>{
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if(widget.mode == 'Reminder'){
         List<String> details = await ChannelTasks.getReminderData();
-        Reminder.showReminder(context, details);
+        Reminder.showReminder(context, details,Provider.of<EventsModel>(context,listen: false));
+      }
+    });
+    MethodChannel channel = MethodChannel('com.example.virtual_event_manager.platform_channel');
+    channel.setMethodCallHandler((MethodCall call) async {
+      if(call.method == 'showReminder(call)'){
+        showReminder(call);
       }
     });
   }
 
+  void showReminder(MethodCall call){
+    dynamic details =  call.arguments;
+    Reminder.showReminder(context, [details["Id"],details["Text"],details["Date"],details["Time"],details["Silent"],details["Repeat"]],Provider.of<EventsModel>(context,listen: false));
+  }
+
   @override
   Widget build(BuildContext context){
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => EventsModel()
-        ),
-        ChangeNotifierProvider(
-          create: (context) => NotesModel()
-        )
-      ],
-      child: Scaffold(
+    return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Color.fromARGB(255, 23, 30, 39),
         appBar: AppBar(
           title: Text('Event Manager',
-            style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 25, color: Colors.white)),
+            style:  TextStyle(fontSize: 25, color: Colors.white),
           ),
           backgroundColor: Color.fromARGB(150, 41, 43, 50),
         ),
@@ -82,7 +95,7 @@ class MyHomePageState extends State<MyHomePage>{
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(top: 10, left: 10, bottom: 10),
               child: Text('Upcoming Events: ',
-                style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 20, color: Colors.white,)),
+                style: TextStyle(fontSize: 20, color: Colors.white,),
                 textAlign: TextAlign.left,
               ),
             ),
@@ -97,8 +110,9 @@ class MyHomePageState extends State<MyHomePage>{
             )
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
+
+ 

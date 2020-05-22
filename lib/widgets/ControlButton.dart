@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ControlButton extends StatelessWidget{
   final IconData icon;
@@ -24,7 +23,7 @@ class ControlButton extends StatelessWidget{
         ),
         Container(
           padding: EdgeInsets.only(left:5,right: 5),
-          child: Text(text,style: GoogleFonts.quicksand(textStyle: TextStyle(fontSize: 12, color: Colors.blue[200])),textAlign: TextAlign.center,),
+          child: Text(text,style: TextStyle(fontSize: 12, color: Colors.blue[200]),textAlign: TextAlign.center,),
         )
         ],
       ),

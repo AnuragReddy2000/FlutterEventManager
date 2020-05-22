@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/services.dart';
 
 class ChannelTasks {
@@ -13,6 +11,10 @@ class ChannelTasks {
 
   static void cancelAlarm(List<String> inp) async {
     await channel.invokeMethod('cancelAlarm(call)',input(inp));
+  }
+
+  static void snooze(List<String> inp) async {
+    await channel.invokeMethod('snooze(call)',input(inp));
   }
 
   static Map<String,dynamic> input(List<String> inp){
@@ -32,8 +34,8 @@ class ChannelTasks {
     return details;
   }
 
-  static void sendNotification() async {
-    await channel.invokeMethod('sendNotification(intentdata)');
+  static void sendNotification(List<String> inp) async {
+    await channel.invokeMethod('sendNotification(call)',input(inp));
   }
 
 }
