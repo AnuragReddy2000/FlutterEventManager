@@ -36,6 +36,7 @@ class Reminder{
               if(inputdata[4] == 'false'){
                 FlutterRingtonePlayer.stop();
               }
+              Navigator.pop(context);
               SystemChannels.platform.invokeMethod('SystemNavigator.pop');
             }
           },

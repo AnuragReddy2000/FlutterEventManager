@@ -3,7 +3,6 @@ package com.example.virtual_event_manager
 import android.annotation.SuppressLint
 import android.app.*
 import android.app.AlarmManager.RTC_WAKEUP
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
@@ -21,7 +20,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterMain
 import java.text.SimpleDateFormat
-import java.util.*
 
 
 class MainActivity: FlutterActivity() {
@@ -75,30 +73,28 @@ class MainActivity: FlutterActivity() {
     }
 
     override fun onNewIntent(intent: Intent) {
+        Log.d("case","onNewIntent")
         super.onNewIntent(intent)
         val channel = MethodChannel(flutterEngine!!.dartExecutor,CHANNEL)
         val data = intent.extras
-        Log.d("before","check")
-        val channelargs = mapOf<String,String>("Id" to data!!["Id"]!!.toString(),"Text" to data["Text"]!!.toString(),"Date" to data["Date"]!!.toString(),"Time" to data["Time"]!!.toString(),"Silent" to data["Silent"]!!.toString(),"Repeat" to data["Repeat"]!!.toString())
-        channel.invokeMethod("showReminder(call)", channelargs)
-        Log.d("after","check")
+        if(data!!["route"]!!.toString() == "reminder"){
+            val channelargs = mapOf<String,String>("Id" to data["Id"]!!.toString(),"Text" to data["Text"]!!.toString(),"Date" to data["Date"]!!.toString(),"Time" to data["Time"]!!.toString(),"Silent" to data["Silent"]!!.toString(),"Repeat" to data["Repeat"]!!.toString())
+            channel.invokeMethod("showReminder(call)", channelargs)
+        }
     }
 
     private fun snooze(call: MethodCall){
-        val intent = Intent("com.example.virtual_event_manager.RING")
+        val intent = Intent(context,MyReceiver::class.java)
+        intent.action = "com.example.virtual_event_manager.RING"
         intent.putExtra("Id",call.argument<String>("Id"))
         intent.putExtra("Text",call.argument<String>("Text"))
         intent.putExtra("Date",call.argument<String>("Date"))
         intent.putExtra("Time",call.argument<String>("Time"))
         intent.putExtra("Silent",call.argument<String>("Silent"))
-        if(call.argument<String>("Repeat")  != "false"){
-            intent.putExtra("Repeat","snooze")
-        }
-        else{
-            intent.putExtra("Repeat","false")
-        }
+        intent.putExtra("Repeat","snooze")
+        intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
         val id = call.argument<String>("Id")
-        val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,0)
+        val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         var time = getTime(call.argument<String>("Date")!!,call.argument<String>("Time")!!).toLong()
         time += 300000
@@ -106,24 +102,27 @@ class MainActivity: FlutterActivity() {
     }
 
     private fun cancelAlarm(call: MethodCall) {
-        val intent = Intent("com.example.virtual_event_manager.RING")
+        val intent = Intent(context,MyReceiver::class.java)
+        intent.action = "com.example.virtual_event_manager.RING"
         val id = call.argument<String>("Id")
-        val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,0)
+        val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         manager.cancel(pendingintent)
         Toast.makeText(getApplicationContext(),"Reminder Cancelled", Toast.LENGTH_SHORT).show();
     }
 
     private fun setAlarm(call: MethodCall): String {
-        val intent = Intent("com.example.virtual_event_manager.RING")
+        val intent = Intent(context,MyReceiver::class.java)
+        intent.action = "com.example.virtual_event_manager.RING"
         intent.putExtra("Id",call.argument<String>("Id"))
         intent.putExtra("Text",call.argument<String>("Text"))
         intent.putExtra("Date",call.argument<String>("Date"))
         intent.putExtra("Time",call.argument<String>("Time"))
         intent.putExtra("Silent",call.argument<String>("Silent"))
         intent.putExtra("Repeat",call.argument<String>("Repeat"))
+        intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
         val id = call.argument<String>("Id")
-        val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,0)
+        val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = getTime(call.argument<String>("Date")!!,call.argument<String>("Time")!!)
         manager.setExactAndAllowWhileIdle(RTC_WAKEUP,time.toLong(),pendingintent)
@@ -139,24 +138,23 @@ class MainActivity: FlutterActivity() {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         }
+        val id = call.argument<String>("Id")
         intent.putExtra("Id",call.argument<String>("Id"))
         intent.putExtra("Text",call.argument<String>("Text"))
         intent.putExtra("Date",call.argument<String>("Date"))
         intent.putExtra("Time",call.argument<String>("Time"))
         intent.putExtra("Silent","true")
-        intent.putExtra("Repeat",call.argument<String>("Repeat"))
+        intent.putExtra("Repeat","false")
         intent.putExtra("route","reminder")
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, id!!.toInt(), intent, 0)
         val nbuilder = NotificationCompat.Builder(this,getString(R.string.CHANNEL_ID))
-                .setSmallIcon(R.drawable.ic_announcement)
+                .setSmallIcon(R.mipmap.ic_stat_em_1)
                 .setContentTitle("Reminder")
                 .setContentText(intent.getStringExtra("Text"))
                 .setStyle(NotificationCompat.BigTextStyle().bigText("Reminder Date and Time: " + intent.getStringExtra("Date") + " & " + intent.getStringExtra("Time")).setBigContentTitle(intent.getStringExtra("Text")))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setLargeIcon((getDrawable(R.mipmap.appicon) as BitmapDrawable).bitmap)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
-        val id = intent.getStringExtra("Id")
         with(NotificationManagerCompat.from(this)) {
             notify(id.toInt(), nbuilder.build())
         }
@@ -190,57 +188,4 @@ class MainActivity: FlutterActivity() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-}
-
-class MyReceiver: BroadcastReceiver() {
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-        val pm = context!!.packageManager
-        val launchIntent = pm.getLaunchIntentForPackage("com.example.virtual_event_manager")
-        var data = intent!!.extras
-        if(data!!["Repeat"] != "false" && data["Repeat"] != "snooze"){
-            setRepeatAlarm(data,context)
-        }
-        data.putString("route","reminder")
-        launchIntent!!.putExtras(data)
-        launchIntent.setAction(Intent.ACTION_MAIN)
-        launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-        launchIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-        context.startActivity(launchIntent)
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun setRepeatAlarm(intentdata: Bundle, context: Context){
-        val intent = Intent("com.example.virtual_event_manager.RING")
-        val id = intentdata["Id"]!!.toString()
-        var alarmtime = getTime(intentdata["Date"]!!.toString(),intentdata["Time"]!!.toString()).toLong()
-        if(intentdata["Repeat"] == "Daily"){
-            alarmtime += 86400000
-        }else if (intentdata["Repeat"] == "Weekly"){
-            alarmtime += 604800000
-        }else if(intentdata["Repeat"] == "Monthly"){
-            alarmtime += 2629800000
-        }
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = alarmtime
-        val nextdate = SimpleDateFormat("yyyy-MM-dd").format(calendar.time)
-        val nexttime = SimpleDateFormat("HH:mm:ss").format(calendar.time)
-        intentdata.putString("Date",nextdate)
-        intentdata.putString("Time",nexttime)
-        val db = DatabaseHelper(context)
-        db.update(nextdate,nexttime,id)
-        intent.putExtras(intentdata)
-        val pendingintent = PendingIntent.getBroadcast(context,id.toInt(),intent,0)
-        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        manager.setExactAndAllowWhileIdle(RTC_WAKEUP,alarmtime,pendingintent)
-        db.close()
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun getTime(date: String, time: String): String{
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-        val datetime = sdf.parse(date +  "T" + time)
-        return datetime.time.toString()
-    }
-
 }

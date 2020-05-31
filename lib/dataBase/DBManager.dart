@@ -45,7 +45,7 @@ class DBManager{
     Map<String, dynamic> row = {
       columnKey : uuid.v4().toString(),
       columnTitle : "Welcome Note",
-      columnText : "Hi! Welcome to Event Manager, the one app to plan your day! \n\nThis app features three reminder types i.e Normal or Ring Alert, Silent Notification, Repeating Reminder. There is also a Notes feature where one can add, edit, delete notes. So, get started and explore the app to better know its functionality. \n\nPS. Please enable the Autostart, Display pop-up windows from background, Show on Lock screen and Permanent notification permissions for this app, in the settings",
+      columnText : "Hi! Welcome to Event Manager, the one app to plan your day! \n\nThis app features three reminder types i.e Normal or Ring Alert, Silent Notification, Repeating Reminder. There is also a Notes feature where one can add, edit, delete notes. So, get started and explore the app to better know its functionality. \n\nPS. If you are using Xiaomi phones with MIUI, Please enable the Autostart, Display pop-up windows from background, Show on Lock screen and Permanent notification permissions for this app, in the settings",
       columnDate : DateFormat('yyyy-MM-dd').format(date),
       columnTime : DateFormat.jms().format(date),
     };

@@ -81,6 +81,7 @@ class ReminderInput{
                       Container(),
                       isTimeset ? Row(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text('Remind on:  ',
                             style: TextStyle(fontSize: 14, color: Colors.white,),
@@ -89,6 +90,7 @@ class ReminderInput{
                           Text(DateFormat.E().format(remindertime) +' '+ DateFormat('dd-MM-yyyy').format(remindertime) +' at '+ DateFormat.jm().format(remindertime),
                             style: TextStyle(fontSize: 14, color: Colors.blue[200],),
                             textAlign: TextAlign.left,
+                            maxLines: 2,
                           )
                         ],
                       )

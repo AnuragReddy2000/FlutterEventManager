@@ -63,12 +63,12 @@ class MyHomePageState extends State<MyHomePage>{
         List<String> details = await ChannelTasks.getReminderData();
         Reminder.showReminder(context, details,Provider.of<EventsModel>(context,listen: false));
       }
-    });
-    MethodChannel channel = MethodChannel('com.example.virtual_event_manager.platform_channel');
-    channel.setMethodCallHandler((MethodCall call) async {
-      if(call.method == 'showReminder(call)'){
-        showReminder(call);
-      }
+      MethodChannel channel = MethodChannel('com.example.virtual_event_manager.platform_channel');
+      channel.setMethodCallHandler((MethodCall call) async {
+        if(call.method == 'showReminder(call)'){
+          showReminder(call);
+        }
+      });
     });
   }
 
