@@ -17,15 +17,15 @@ class Reminder{
         if(inputdata[4] == 'false'){
           FlutterRingtonePlayer.playAlarm();
         }
-        if(inputdata[5] == 'false'){
-          myEventsModel.recievedReminder(inputdata[0]);
-        }
-        else{
-          myEventsModel.getData();
-        }
         Timer(Duration(minutes: 5), (){
           if(inputdata[4] == 'false'){
             FlutterRingtonePlayer.stop();
+          }
+          if(inputdata[5] == 'false'){
+            myEventsModel.recievedReminder(inputdata[0]);
+          }
+          else{
+            myEventsModel.getData();
           }
           ChannelTasks.sendNotification(inputdata);
           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -35,6 +35,12 @@ class Reminder{
             if(details.delta.dy < 0){
               if(inputdata[4] == 'false'){
                 FlutterRingtonePlayer.stop();
+              }
+              if(inputdata[5] == 'false'){
+                myEventsModel.recievedReminder(inputdata[0]);
+              }
+              else{
+                myEventsModel.getData();
               }
               Navigator.pop(context);
               SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -69,6 +75,12 @@ class Reminder{
                           if(inputdata[4] == 'false'){
                             FlutterRingtonePlayer.stop();
                           }
+                          if(inputdata[5] == 'false'){
+                            myEventsModel.recievedReminder(inputdata[0]);
+                          }
+                          else{
+                            myEventsModel.getData();
+                          }
                           Navigator.pop(context);
                         }, 
                       ),
@@ -76,6 +88,12 @@ class Reminder{
                         onPressed: (){
                           if(inputdata[4] == 'false'){
                             FlutterRingtonePlayer.stop();
+                          }
+                          if(inputdata[5] == 'false'){
+                            myEventsModel.recievedReminder(inputdata[0]);
+                          }
+                          else{
+                            myEventsModel.getData();
                           }
                           Navigator.pop(context);
                         }, 
@@ -85,6 +103,12 @@ class Reminder{
                           ChannelTasks.snooze(inputdata);
                           if(inputdata[4] == 'false'){
                             FlutterRingtonePlayer.stop();
+                          }
+                          if(inputdata[5] == 'false'){
+                            myEventsModel.recievedReminder(inputdata[0]);
+                          }
+                          else{
+                            myEventsModel.getData();
                           }
                           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                         }, 

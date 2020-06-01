@@ -60,5 +60,10 @@
                 <action android:name="android.intent.action.REBOOT"/>
             </intent-filter>
         </receiver>
+        <service
+            android:name=".MyRebootService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:label="ReminderReSchedulerService"
+            android:exported="false"/>
     </application>
 </manifest>

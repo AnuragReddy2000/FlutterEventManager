@@ -99,6 +99,7 @@ class MainActivity: FlutterActivity() {
         var time = getTime(call.argument<String>("Date")!!,call.argument<String>("Time")!!).toLong()
         time += 300000
         manager.setExactAndAllowWhileIdle(RTC_WAKEUP,time,pendingintent)
+        Toast.makeText(getApplicationContext(),"Snoozed", Toast.LENGTH_SHORT).show();
     }
 
     private fun cancelAlarm(call: MethodCall) {
@@ -150,7 +151,7 @@ class MainActivity: FlutterActivity() {
         val nbuilder = NotificationCompat.Builder(this,getString(R.string.CHANNEL_ID))
                 .setSmallIcon(R.mipmap.ic_stat_em_1)
                 .setContentTitle("Reminder")
-                .setContentText(intent.getStringExtra("Text"))
+                .setContentText("Reminder: " + intent.getStringExtra("Text"))
                 .setStyle(NotificationCompat.BigTextStyle().bigText("Reminder Date and Time: " + intent.getStringExtra("Date") + " & " + intent.getStringExtra("Time")).setBigContentTitle(intent.getStringExtra("Text")))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
