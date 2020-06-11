@@ -28,22 +28,27 @@ class NotesCarousel extends StatelessWidget{
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.all(5),
-                      alignment: Alignment.center,
-                      child: Text(input[i][1],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 22, color: Colors.blue[200],),
-                      ),
-                    ),
-                    Container(
+                    Flexible(
+                      child: Container(
                       margin: EdgeInsets.only(left:5,right:5),
                       alignment: Alignment.center,
-                      child: Text(input[i][2],
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                        style: TextStyle(fontSize: 20, color: Colors.white,),
+                        child: ListView(
+                          padding: EdgeInsets.all(0),
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.all(5),
+                              alignment: Alignment.center,
+                              child: Text(input[i][1],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 22, color: Colors.blue[200],),
+                              ),
+                            ),
+                            Text(input[i][2],
+                              textAlign: TextAlign.left,
+                              style: TextStyle(fontSize: 20, color: Colors.white,),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Row(
@@ -55,7 +60,7 @@ class NotesCarousel extends StatelessWidget{
                             alignment: Alignment.centerLeft,
                             child: Text(input[i][3],
                               textAlign: TextAlign.left,
-                              style: TextStyle(fontSize: 16, color: Colors.white54,),
+                              style: TextStyle(fontSize: 15, color: Colors.white54,),
                             ),
                           ),
                         ),

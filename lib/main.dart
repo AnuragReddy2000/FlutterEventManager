@@ -74,7 +74,7 @@ class MyHomePageState extends State<MyHomePage>{
 
   void showReminder(MethodCall call){
     dynamic details =  call.arguments;
-    Reminder.showReminder(context, [details["Id"],details["Text"],details["Date"],details["Time"],details["Silent"],details["Repeat"]],Provider.of<EventsModel>(context,listen: false));
+    Reminder.showReminder(context, [details["Id"],details["Text"],details["Date"],details["Time"],details["Silent"],details["Repeat"],details["Type"]],Provider.of<EventsModel>(context,listen: false));
   }
 
   @override
@@ -99,13 +99,17 @@ class MyHomePageState extends State<MyHomePage>{
                 textAlign: TextAlign.left,
               ),
             ),
-            Row(
-              children: <Widget>[
-                UpcomingEvents(),
-                Expanded(child: EventControl()),
-              ],
+            Flexible(
+              flex: 13,
+              child: Row(
+                children: <Widget>[
+                  UpcomingEvents(),
+                  Expanded(child: EventControl()),
+                ],
+              ),
             ),
-            Expanded(
+            Flexible(
+              flex: 7,
               child: Notes(),
             )
           ],

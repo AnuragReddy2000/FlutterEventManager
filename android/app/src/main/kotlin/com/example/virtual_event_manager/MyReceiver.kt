@@ -9,6 +9,9 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,19 +26,62 @@ class MyReceiver: BroadcastReceiver() {
     private class MyTask(val pendingResult: PendingResult, val newintent: Intent, val context: Context): AsyncTask<String, Int, String>() {
 
         override fun doInBackground(vararg params: String?): String {
-            val pm = context.packageManager
-            val launchIntent = pm.getLaunchIntentForPackage("com.example.virtual_event_manager")
-            val data = newintent.extras
-            if(data!!["Repeat"]!!.toString() != "false" && data["Repeat"]!!.toString() != "snooze"){
-                Log.d("Repeat",data["Repeat"]!!.toString())
-                setRepeatAlarm(data,context)
+            if(newintent.action == "com.example.virtual_event_manager.RING"){
+                val data = newintent.extras
+                if(data!!["Repeat"]!!.toString() != "false" && data["Type"]!!.toString() == "Normal"){
+                    setRepeatAlarm(data,context)
+                }
+                val id = data["Id"]!!.toString()
+                val serviceIntent = Intent(context,NotificationService::class.java)
+                serviceIntent.putExtras(data)
+                ContextCompat.startForegroundService(context,serviceIntent)
+
+                val stopIntent = Intent(context,MyReceiver::class.java)
+                stopIntent.action = "com.example.virtual_event_manager.notification.channel.STOP"
+                stopIntent.addCategory(Intent.CATEGORY_DEFAULT)
+                val stopPendingIntent = PendingIntent.getBroadcast(context,id.toInt(),stopIntent,PendingIntent.FLAG_ONE_SHOT)
+                val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val time = Date().time + 180000
+                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,time,stopPendingIntent)
             }
-            data.putString("route","reminder")
-            launchIntent!!.putExtras(data)
-            launchIntent.setAction(Intent.ACTION_MAIN)
-            launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            launchIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-            context.startActivity(launchIntent)
+            else if(newintent.action == "com.example.virtual_event_manager.notification.channel.RESPONSE_DISMISS"){
+                val data = newintent.extras
+                val db = DatabaseHelper(context)
+                if(data!!["Repeat"]!!.toString() == "false" && data["Type"] == "Normal") {
+                    db.delete(data["Id"]!!.toString())
+                }
+                val serviceIntent = Intent(context,NotificationService::class.java)
+                db.close()
+                context.stopService(serviceIntent)
+            }else if(newintent.action == "com.example.virtual_event_manager.notification.channel.STOP"){
+                val serviceIntent = Intent(context,NotificationService::class.java)
+                context.stopService(serviceIntent)
+            }else if (newintent.action == "com.example.virtual_event_manager.notification.channel.RESPONSE_SNOOZE"){
+                val data = newintent.extras
+                val db = DatabaseHelper(context)
+                if(data!!["Repeat"]!!.toString() == "false" && data["Type"] == "Normal") {
+                    db.delete(data["Id"]!!.toString())
+                }
+                val intent = Intent(context,MyReceiver::class.java)
+                intent.action = "com.example.virtual_event_manager.RING"
+                intent.putExtra("Id",data["Id"]!!.toString())
+                intent.putExtra("Text",data["Text"]!!.toString())
+                intent.putExtra("Date",data["Date"]!!.toString())
+                intent.putExtra("Time",data["Time"]!!.toString())
+                intent.putExtra("Silent",data["Silent"]!!.toString())
+                intent.putExtra("Repeat",data["Repeat"]!!.toString())
+                intent.putExtra("Type","Snooze")
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
+                val id = data["Id"]!!.toString()
+                val time = Date().time + 300000
+                val pendingintent = PendingIntent.getBroadcast(context,id.toInt(),intent, PendingIntent.FLAG_ONE_SHOT)
+                val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,time,pendingintent)
+                val serviceIntent = Intent(context,NotificationService::class.java)
+                db.close()
+                context.stopService(serviceIntent)
+            }
             Log.d("Receiver","sent")
             return "Done"
         }
@@ -74,6 +120,7 @@ class MyReceiver: BroadcastReceiver() {
             intent.putExtra("Time",nexttime)
             intent.putExtra("Silent",intentdata["Silent"]!!.toString())
             intent.putExtra("Repeat",intentdata["Repeat"]!!.toString())
+            intent.putExtra("Type",intentdata["Type"]!!.toString())
             intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
             val pendingintent = PendingIntent.getBroadcast(context,id.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
             val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -85,7 +132,7 @@ class MyReceiver: BroadcastReceiver() {
         private fun getTime(date: String, time: String): String{
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             val datetime = sdf.parse(date +  "T" + time)
-            return datetime.time.toString()
+            return datetime!!.time.toString()
         }
     }
 

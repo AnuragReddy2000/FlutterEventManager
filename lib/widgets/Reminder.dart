@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:virtual_event_manager/models/EventsModel.dart';
 import 'package:virtual_event_manager/utilities/ChannelTasks.dart';
 import 'package:virtual_event_manager/utilities/DateSupport.dart';
@@ -14,34 +13,28 @@ class Reminder{
     showDialog(context: context,
     builder: (context){
       return StatefulBuilder(builder: (context,setState){
-        if(inputdata[4] == 'false'){
-          FlutterRingtonePlayer.playAlarm();
-        }
         Timer(Duration(minutes: 5), (){
-          if(inputdata[4] == 'false'){
-            FlutterRingtonePlayer.stop();
-          }
-          if(inputdata[5] == 'false'){
+          if(inputdata[5] == 'false' && inputdata[6] == 'Normal'){
             myEventsModel.recievedReminder(inputdata[0]);
           }
           else{
             myEventsModel.getData();
           }
+          ChannelTasks.endReminder();
+          ChannelTasks.removeFromLockscreen();
           ChannelTasks.sendNotification(inputdata);
           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         });
         return GestureDetector(
           onPanUpdate: (details) {
             if(details.delta.dy < 0){
-              if(inputdata[4] == 'false'){
-                FlutterRingtonePlayer.stop();
-              }
-              if(inputdata[5] == 'false'){
+              if(inputdata[5] == 'false' && inputdata[6] == 'Normal'){
                 myEventsModel.recievedReminder(inputdata[0]);
               }
               else{
                 myEventsModel.getData();
               }
+              ChannelTasks.endReminder();
               Navigator.pop(context);
               SystemChannels.platform.invokeMethod('SystemNavigator.pop');
             }
@@ -62,54 +55,76 @@ class Reminder{
               ),
             ),
             actions: <Widget>[
+              (inputdata[6] == 'Notification') ? 
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  FlatButton(child: Text('Back',style: TextStyle(color: Colors.blue[200],)), 
+                    padding: EdgeInsets.all(1),
+                    onPressed: (){
+                      ChannelTasks.removeFromLockscreen();
+                      Navigator.pop(context);
+                    }, 
+                  ),
+                  FlatButton(child: Text('Close',style: TextStyle(color: Colors.blue[200],)), 
+                    padding: EdgeInsets.all(1),
+                    onPressed: (){
+                      ChannelTasks.removeFromLockscreen();
+                      Navigator.pop(context);
+                      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                    }, 
+                  )
+                ],
+              )
+              :
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[    
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       FlatButton(child: Text('Leave a Notification',style: TextStyle(color: Colors.blue[200],)), 
+                        padding: EdgeInsets.all(1),
                         onPressed: (){
-                          ChannelTasks.sendNotification(inputdata);
-                          if(inputdata[4] == 'false'){
-                            FlutterRingtonePlayer.stop();
-                          }
-                          if(inputdata[5] == 'false'){
+                          ChannelTasks.endReminder();
+                          if(inputdata[5] == 'false' && inputdata[6] == 'Normal'){
                             myEventsModel.recievedReminder(inputdata[0]);
                           }
                           else{
                             myEventsModel.getData();
                           }
+                          ChannelTasks.removeFromLockscreen();
+                          ChannelTasks.sendNotification(inputdata);
                           Navigator.pop(context);
                         }, 
                       ),
                       FlatButton(child: Text('Back',style: TextStyle(color: Colors.blue[200],)), 
+                        padding: EdgeInsets.all(1),
                         onPressed: (){
-                          if(inputdata[4] == 'false'){
-                            FlutterRingtonePlayer.stop();
-                          }
-                          if(inputdata[5] == 'false'){
+                          ChannelTasks.endReminder();
+                          if(inputdata[5] == 'false' && inputdata[6] == 'Normal'){
                             myEventsModel.recievedReminder(inputdata[0]);
                           }
                           else{
                             myEventsModel.getData();
                           }
+                          ChannelTasks.removeFromLockscreen();
                           Navigator.pop(context);
                         }, 
                       ),
                       FlatButton(child: Text('Snooze',style: TextStyle(color: Colors.blue[200],)), 
+                        padding: EdgeInsets.all(1),
                         onPressed: (){
                           ChannelTasks.snooze(inputdata);
-                          if(inputdata[4] == 'false'){
-                            FlutterRingtonePlayer.stop();
-                          }
-                          if(inputdata[5] == 'false'){
+                          ChannelTasks.endReminder();
+                          if(inputdata[5] == 'false' && inputdata[6] == 'Normal'){
                             myEventsModel.recievedReminder(inputdata[0]);
                           }
                           else{
                             myEventsModel.getData();
                           }
+                          ChannelTasks.removeFromLockscreen();
                           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                         }, 
                       ),
@@ -117,7 +132,7 @@ class Reminder{
                   ),
                   Text('Swipe up to dismiss',style:  TextStyle(color: Colors.white,))
                 ],
-              ),
+              )
             ],
           ),
         );

@@ -17,6 +17,10 @@ class ChannelTasks {
     await channel.invokeMethod('snooze(call)',input(inp));
   }
 
+  static void endReminder() async {
+    await channel.invokeMethod('endReminder');
+  }
+
   static Map<String,dynamic> input(List<String> inp){
     Map<String, dynamic> args = <String, dynamic>{};
     args['Id'] = inp[0];
@@ -36,6 +40,10 @@ class ChannelTasks {
 
   static void sendNotification(List<String> inp) async {
     await channel.invokeMethod('sendNotification(call)',input(inp));
+  }
+
+  static void removeFromLockscreen() async {
+    await channel.invokeMethod('removeFromLockscreen');
   }
 
 }

@@ -12,7 +12,7 @@ class EventControl extends StatelessWidget{
   @override 
   Widget build(BuildContext context){
     return Container(
-      height: MediaQuery.of(context).size.height*(0.55),
+      //height: MediaQuery.of(context).size.height*(0.55),
       decoration: BoxDecoration(
         color: Color.fromARGB(150, 41, 43, 50),
           border: Border(

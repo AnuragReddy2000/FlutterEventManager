@@ -9,7 +9,7 @@ class NotesInput{
     await showDialog(context: context, 
       builder: (_) => AlertDialog(
         backgroundColor: Color.fromARGB(255, 23, 30, 39),
-        title: Text('Add new note ',style:  TextStyle(fontSize: 22, color: Colors.blue[200],),),
+        title: Text((type == 'new') ? 'Add new note ': 'Edit note',style:  TextStyle(fontSize: 22, color: Colors.blue[200],),),
         content: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -20,23 +20,27 @@ class NotesInput{
                   alignment: Alignment.centerLeft,
                   child: Text('Title: ',style: TextStyle(fontSize: 20, color: Colors.white,),),
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 6,bottom: 1),
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.white),
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
-                  child: TextFormField(
-                    initialValue: title,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      errorStyle: TextStyle(color: Colors.red),
-                      enabledBorder: InputBorder.none,
+                TextFormField(
+                  initialValue: title,
+                  decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(2.0),
+                      borderSide: BorderSide(
+                        color: Colors.white54
+                      ),
                     ),
-                    style: TextStyle(color: Colors.white),
-                    onSaved: (value) => title = value,
-                    validator: (value) => (value == ' ') ? 'This field must be filled' : null,
+                    errorStyle: TextStyle(color: Colors.red),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(2.0),
+                      borderSide: BorderSide(
+                        color: Colors.white
+                      ) 
+                    ),
                   ),
+                  style: TextStyle(color: Colors.white),
+                  onSaved: (value) => title = value,
+                  validator: (value) => (value == ' ') ? 'This field must be filled' : null,
                 ),
                 Container(
                   margin: EdgeInsets.only(right:5,top: 10,bottom: 5),

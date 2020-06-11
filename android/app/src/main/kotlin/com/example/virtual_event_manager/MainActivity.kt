@@ -20,14 +20,77 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterMain
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.example.virtual_event_manager.platform_channel"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        FlutterMain.startInitialization(this);
+        FlutterMain.startInitialization(context);
         super.onCreate(savedInstanceState)
+        val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager;
+        val intentdata = intent.extras
+        if(intentdata != null){
+            if(intentdata.containsKey("route")){
+                if(intentdata["route"] == "reminder"){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                        setShowWhenLocked(true)
+                        setTurnScreenOn(true)
+                        km.requestDismissKeyguard(this, null)
+                    }
+                    else{
+                        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+                    }
+                }
+            }
+        }
+        createNotificationChannel()
+        val channel = MethodChannel(flutterEngine!!.dartExecutor,CHANNEL)
+        channel.setMethodCallHandler { call, result ->
+            if(call.method == "setAlarm(call)") {
+                val message = setAlarm(call)
+                result.success(message)
+            }else if(call.method == "getReminderDetails(intentdata)"){
+                if(intentdata!!.containsKey("route")){
+                    if(intentdata["route"] == "reminder"){
+                        val message = getReminderDetails(intentdata)
+                        result.success(message)
+                    }
+                }
+                else{
+                    result.success("Unable to find reminder data")
+                }
+            }else if(call.method == "sendNotification(call)") {
+                sendNotification(call)
+                result.success("Success")
+            }else if(call.method == "cancelAlarm(call)"){
+                cancelAlarm(call)
+            }else if(call.method == "snooze(call)"){
+                snooze(call)
+            }else if(call.method == "removeFromLockscreen") {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    setShowWhenLocked(false)
+                    setTurnScreenOn(false)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+                }
+            }else if(call.method == "endReminder") {
+                val serviceIntent = Intent(context,NotificationService::class.java)
+                context.stopService(serviceIntent)
+            } else{
+                result.notImplemented()
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
         val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -40,45 +103,12 @@ class MainActivity: FlutterActivity() {
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                     WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
         }
-        createNotificationChannel()
-        val channel = MethodChannel(flutterEngine!!.dartExecutor,CHANNEL)
-        val intentdata = intent.extras
-        channel.setMethodCallHandler { call, result ->
-            if(call.method == "setAlarm(call)") {
-                val message = setAlarm(call)
-                result.success(message)
-            }else if(call.method == "getReminderDetails(intentdata)"){
-                if(intentdata != null){
-                    if(intentdata.containsKey("route")){
-                        if(intentdata["route"] == "reminder"){
-                            val message = getReminderDetails(intentdata)
-                            result.success(message)
-                        }
-                    }
-                    else{
-                        result.success("Unable to find reminder data")
-                    }
-                }
-            }else if(call.method == "sendNotification(call)") {
-                sendNotification(call)
-                result.success("Success")
-            }else if(call.method == "cancelAlarm(call)"){
-                cancelAlarm(call)
-            }else if(call.method == "snooze(call)"){
-                snooze(call)
-            }else{
-                result.notImplemented()
-            }
-        }
-    }
-
-    override fun onNewIntent(intent: Intent) {
         Log.d("case","onNewIntent")
         super.onNewIntent(intent)
         val channel = MethodChannel(flutterEngine!!.dartExecutor,CHANNEL)
         val data = intent.extras
         if(data!!["route"]!!.toString() == "reminder"){
-            val channelargs = mapOf<String,String>("Id" to data["Id"]!!.toString(),"Text" to data["Text"]!!.toString(),"Date" to data["Date"]!!.toString(),"Time" to data["Time"]!!.toString(),"Silent" to data["Silent"]!!.toString(),"Repeat" to data["Repeat"]!!.toString())
+            val channelargs = mapOf<String,String>("Id" to data["Id"]!!.toString(),"Text" to data["Text"]!!.toString(),"Date" to data["Date"]!!.toString(),"Time" to data["Time"]!!.toString(),"Silent" to data["Silent"]!!.toString(),"Repeat" to data["Repeat"]!!.toString(),"Type" to data["Type"]!!.toString())
             channel.invokeMethod("showReminder(call)", channelargs)
         }
     }
@@ -91,13 +121,14 @@ class MainActivity: FlutterActivity() {
         intent.putExtra("Date",call.argument<String>("Date"))
         intent.putExtra("Time",call.argument<String>("Time"))
         intent.putExtra("Silent",call.argument<String>("Silent"))
-        intent.putExtra("Repeat","snooze")
+        intent.putExtra("Repeat",call.argument<String>("Repeat"))
+        intent.putExtra("Type","Snooze")
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
         intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
         val id = call.argument<String>("Id")
+        val time = Date().time + 300000
         val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        var time = getTime(call.argument<String>("Date")!!,call.argument<String>("Time")!!).toLong()
-        time += 300000
         manager.setExactAndAllowWhileIdle(RTC_WAKEUP,time,pendingintent)
         Toast.makeText(getApplicationContext(),"Snoozed", Toast.LENGTH_SHORT).show();
     }
@@ -105,6 +136,7 @@ class MainActivity: FlutterActivity() {
     private fun cancelAlarm(call: MethodCall) {
         val intent = Intent(context,MyReceiver::class.java)
         intent.action = "com.example.virtual_event_manager.RING"
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
         val id = call.argument<String>("Id")
         val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -121,6 +153,8 @@ class MainActivity: FlutterActivity() {
         intent.putExtra("Time",call.argument<String>("Time"))
         intent.putExtra("Silent",call.argument<String>("Silent"))
         intent.putExtra("Repeat",call.argument<String>("Repeat"))
+        intent.putExtra("Type","Normal")
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
         intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
         val id = call.argument<String>("Id")
         val pendingintent = PendingIntent.getBroadcast(context,id!!.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
@@ -132,7 +166,7 @@ class MainActivity: FlutterActivity() {
     }
 
     private fun getReminderDetails(intentdata: Bundle): String{
-        return intentdata["Id"]!!.toString() + "," + intentdata["Text"]!!.toString() +","+ intentdata["Date"]!!.toString() +","+ intentdata["Time"]!!.toString() +","+ intentdata["Silent"]!!.toString() +","+ intentdata["Repeat"]!!.toString()
+        return intentdata["Id"]!!.toString() + "," + intentdata["Text"]!!.toString() +","+ intentdata["Date"]!!.toString() +","+ intentdata["Time"]!!.toString() +","+ intentdata["Silent"]!!.toString() +","+ intentdata["Repeat"]!!.toString()+","+intentdata["Type"]!!.toString()
     }
 
     private fun sendNotification(call: MethodCall){
@@ -147,6 +181,7 @@ class MainActivity: FlutterActivity() {
         intent.putExtra("Silent","true")
         intent.putExtra("Repeat","false")
         intent.putExtra("route","reminder")
+        intent.putExtra("Type","Notification")
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, id!!.toInt(), intent, 0)
         val nbuilder = NotificationCompat.Builder(this,getString(R.string.CHANNEL_ID))
                 .setSmallIcon(R.mipmap.ic_stat_em_1)
@@ -165,7 +200,7 @@ class MainActivity: FlutterActivity() {
     private fun getTime(date: String, time: String): String{
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         val datetime = sdf.parse(date +  "T" + time)
-        return datetime.time.toString()
+        return datetime!!.time.toString()
     }
 
     private fun createNotificationChannel() {

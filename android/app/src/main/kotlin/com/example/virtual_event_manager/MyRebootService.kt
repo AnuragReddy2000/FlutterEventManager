@@ -33,13 +33,15 @@ class MyRebootService() : JobService() {
             for(event in rem){
                 val time = getTime(event[2],event[3]).toLong()
                 if(time > presenttime){
-                    val intent = Intent("com.example.virtual_event_manager.RING")
+                    val intent = Intent(this,MyReceiver::class.java)
+                    intent.action = "com.example.virtual_event_manager.RING"
                     intent.putExtra("Id",event[0])
                     intent.putExtra("Text",event[1])
                     intent.putExtra("Date",event[2])
                     intent.putExtra("Time",event[3])
                     intent.putExtra("Silent",event[4])
                     intent.putExtra("Repeat",event[5])
+                    intent.putExtra("Type","Normal")
                     intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
                     val id = event[0]
                     val pendingintent = PendingIntent.getBroadcast(this,id.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
@@ -58,6 +60,7 @@ class MyRebootService() : JobService() {
                     intent.putExtra("Silent","true")
                     intent.putExtra("Repeat","false")
                     intent.putExtra("route","reminder")
+                    intent.putExtra("Type","Notification")
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(this, id.toInt(), intent, 0)
                     val nbuilder = NotificationCompat.Builder(this,getString(R.string.CHANNEL_ID))
                             .setSmallIcon(R.mipmap.ic_stat_em_1)
@@ -71,7 +74,7 @@ class MyRebootService() : JobService() {
                     with(NotificationManagerCompat.from(this)) {
                         notify(id.toInt(), nbuilder.build())
                     }
-                    if(event[5] != "false" && event[5] != "snooze"){
+                    if(event[5] != "false"){
                         var interval: Long = 0
                         if(event[5] == "Daily"){
                             interval = 86400000
@@ -93,6 +96,7 @@ class MyRebootService() : JobService() {
                         intent.putExtra("Time",nexttime)
                         intent.putExtra("Silent",event[4])
                         intent.putExtra("Repeat",event[5])
+                        intent.putExtra("Type","Normal")
                         intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
                         val pendingintent = PendingIntent.getBroadcast(this,id.toInt(),intent,PendingIntent.FLAG_ONE_SHOT)
                         val manager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -115,6 +119,6 @@ class MyRebootService() : JobService() {
     private fun getTime(date: String, time: String): String{
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         val datetime = sdf.parse(date +  "T" + time)
-        return datetime.time.toString()
+        return datetime!!.time.toString()
     }
 }

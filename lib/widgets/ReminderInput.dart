@@ -21,6 +21,7 @@ class ReminderInput{
                 style: TextStyle(fontSize: 22, color: Colors.blue[200],),
               ),
               content: SingleChildScrollView(
+                padding: EdgeInsets.all(0),
                 child:Form(
                   key: _formKey,
                   child: Column(
@@ -79,28 +80,27 @@ class ReminderInput{
                       )
                       : 
                       Container(),
-                      isTimeset ? Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      isTimeset ? Wrap(
                         children: <Widget>[
                           Text('Remind on:  ',
-                            style: TextStyle(fontSize: 14, color: Colors.white,),
+                            style: TextStyle( color: Colors.white,fontSize: 14),
                             textAlign: TextAlign.left,
                           ),
                           Text(DateFormat.E().format(remindertime) +' '+ DateFormat('dd-MM-yyyy').format(remindertime) +' at '+ DateFormat.jm().format(remindertime),
-                            style: TextStyle(fontSize: 14, color: Colors.blue[200],),
-                            textAlign: TextAlign.left,
-                            maxLines: 2,
-                          )
+                            style: TextStyle( color: Colors.blue[200],fontSize: 14),
+                            textAlign: TextAlign.right,
+                          ),
                         ],
                       )
                       : 
                       Container(),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Text(isTimeset ? ' ' : 'Select Reminder time: ',style: TextStyle(fontSize: 14, color: Colors.white,),),
-                          FlatButton(child: Text(isTimeset ? 'Change time' : 'Set time',style: TextStyle(color: Colors.blue[200],)),
+                          Spacer(),
+                          FlatButton(child: Text(isTimeset ? 'Change time' : '   Set time',style: TextStyle(color: Colors.blue[200]),textAlign: TextAlign.right,),
+                            padding: EdgeInsets.all(0),
                             onPressed: (){
                               DatePicker.showDateTimePicker(context,
                                 theme: DatePickerTheme(
